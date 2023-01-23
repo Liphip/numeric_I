@@ -1,5 +1,6 @@
-function augabe_11_2()
+function aufgabe_11_2()
     max_n = 80;
+    max_n_a = 20;
     min_n= 5;
     error = ones(max_n - min_n + 1, 1);
     vector = min_n:1:max_n;
@@ -14,7 +15,7 @@ function augabe_11_2()
         [L,R] = LR_Decomposition(A);
         lr_time(i-min_n+1) = toc;
         tic
-        y = forwards(L,b); 
+        y = forwards(L,b);
         fw_time(i-min_n+1) = toc;
         tic
         x = backwards(R,y);
@@ -22,27 +23,27 @@ function augabe_11_2()
         error(i-min_n+1) = norm(L*R*x-b, Inf);
     end
     fig = figure('Name', 'Abgabe 11-2-a', 'NumberTitle', 'off');
-    semilogy(vector, error, '-*');
+    semilogy(vector(1:max_n_a-min_n+1), error(1:max_n_a-min_n+1), '-*');
     axis padded
     hold on
     title('Aufgabe 11-2-a');
     xlabel('n');
     ylabel('|| LRx - b ||_{\infty}');
-    legend('|| LRx - b ||_{\infty}', Location='northwest');
+    legend('|| LRx - b ||_{\infty}', 'Location','northwest');
     grid on;
     exportgraphics(fig, 'aufgabe_11_2_a.pdf')
 
 
     fig2 = figure('Name', 'Abgabe 11-2-b', 'NumberTitle', 'off');
-    semilogy(vector, lr_time, '-', vector, fw_time, '--', vector, bw_time, '.-', vector, vector.^2, ':', vector, vector.^3, '-');
-    hold on
+    semilogy(vector, lr_time .* 1000, '-', vector, fw_time .* 1000, '--', vector, bw_time .* 1000, '.-', vector, vector.^2, ':', vector, vector.^3, '-');
     axis padded
+    hold on
     title('Aufgabe 11-2-a');
     xlabel('n');
-    ylabel('time [sec]');
-    legend('LR_Decomposition', 'Forwards', 'Backwards', 'O(n^2)', 'O(n^3)', Location='east');
+    ylabel('time [milisec]');
+    legend('LR Decomposition', 'Forwards', 'Backwards', 'O(n^2)', 'O(n^3)', 'Location','east');
     grid on;
-    exportgraphics(fig, 'aufgabe_11_2_b.pdf')
+    exportgraphics(fig2, 'aufgabe_11_2_b.pdf')
 end
 
 %Berechnet die Matrix von Blatt 9 fuer gegebenes n. Hier ist nichts zu tun.
@@ -81,7 +82,7 @@ function [L,R] = LR_Decomposition(A)
 end
 
 function y = forwards(L,b)
-  n=length(L); 
+  n=length(L);
   y=zeros(n,1);
   for i = 1:n
       y(i) = 1/L(i,i) * (b(i) - sum( sum( L(i, 1:i-1) .* y(1:i-1) ) ));
@@ -89,7 +90,7 @@ function y = forwards(L,b)
 end
 
 function x = backwards(R,y)
-  n=length(R); 
+  n=length(R);
   x=zeros(n,1);
   for i = n-1:-1:1
       x(i) = 1/R(i,i) * (y(i) - sum ( sum( R(i,i+1:n) .* x(i+1:n) ) ));
